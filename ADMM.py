@@ -1,15 +1,14 @@
 import numpy as np
 import numpy.fft as fft
+import cv2
 from PIL import Image
 import matplotlib.pyplot as plt
 import yaml
 
 def loadData(show_im=True):
-    psf = Image.open(psfname)
-    psf = np.array(psf, dtype='float32')
-    data = Image.open(imgname)
-    data = np.array(data, dtype='float32')
-    
+    psf = cv2.imread(psfname, cv2.IMREAD_GRAYSCALE).astype(float) / 255
+    data = cv2.imread(imgname, cv2.IMREAD_GRAYSCALE).astype(float) / 255
+
     """In the picamera, there is a non-trivial background 
     (even in the dark) that must be subtracted"""
     bg = np.mean(psf[5:15,5:15]) 
@@ -189,7 +188,7 @@ def runADMM(psf, data):
 
 if __name__ == "__main__":
     ### Reading in params from config file (don't mess with parameter names!)
-    params = yaml.load(open("admm_config.yml"))
+    params = yaml.safe_load(open("admm_config.yml"))
     for k,v in params.items():
         exec(k + "=v")
 
